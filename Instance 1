@@ -46,13 +46,21 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AddCardActivity.class);
                 MainActivity.this.startActivityForResult(intent, 100);
-                overridePendingTransition(R.anim.left_transition, R.anim.right_transition);
+                overridePendingTransition(R.anim.right_transition, R.anim.left_transition);
             }
         });
 
         findViewById(R.id.next_card).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+            
+                if (isShowingAnswers) {
+                    findViewById(R.id.flashcard_answer1).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.flashcard_answer2).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.flashcard_answer3).setVisibility(View.INVISIBLE);
+                    ((ImageView) findViewById(R.id.toggle_choices_visibility)).setImageResource(R.drawable.ic_flashcard_answer_visible);
+                    isShowingAnswers = false;
+                }
 
                 final Animation leftAnim = AnimationUtils.loadAnimation(v.getContext(), R.anim.left_transition);
                 final Animation rightAnim = AnimationUtils.loadAnimation(v.getContext(), R.anim.right_transition);
@@ -61,19 +69,17 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onAnimationStart(Animation animation) {
                         // this method is called when the animation first starts
-                        findViewById(R.id.flashcard_question).startAnimation(leftAnim);
-                        findViewById(R.id.flashcard_answer1).startAnimation(leftAnim);
-                        findViewById(R.id.flashcard_answer2).startAnimation(leftAnim);
-                        findViewById(R.id.flashcard_answer3).startAnimation(leftAnim);
+                       
                     }
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         // this method is called when the animation is finished playing
                         findViewById(R.id.flashcard_question).startAnimation(rightAnim);
-                        findViewById(R.id.flashcard_answer1).startAnimation(rightAnim);
-                        findViewById(R.id.flashcard_answer2).startAnimation(rightAnim);
-                        findViewById(R.id.flashcard_answer3).startAnimation(rightAnim);
+                        ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
+                        ((TextView) findViewById(R.id.flashcard_answer1)).setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
+                        ((TextView) findViewById(R.id.flashcard_answer2)).setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer1());
+                        ((TextView) findViewById(R.id.flashcard_answer3)).setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer2());
                     }
 
                     @Override
@@ -95,44 +101,42 @@ public class MainActivity extends AppCompatActivity {
                 if (currentCardDisplayedIndex > allFlashcards.size() - 1) {
                     currentCardDisplayedIndex = 0;
                 }
-
-                // set the question and answer TextViews with data from the database
-                ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
-                ((TextView) findViewById(R.id.flashcard_answer1)).setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
-                ((TextView) findViewById(R.id.flashcard_answer2)).setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer1());
-                ((TextView) findViewById(R.id.flashcard_answer3)).setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer2());
-                ((ImageView) findViewById(R.id.toggle_choices_visibility)).setImageResource(R.drawable.ic_flashcard_answer_visible);
-                findViewById(R.id.flashcard_answer1).setVisibility(View.INVISIBLE);
-                findViewById(R.id.flashcard_answer2).setVisibility(View.INVISIBLE);
-                findViewById(R.id.flashcard_answer3).setVisibility(View.INVISIBLE);
-                isShowingAnswers = false;
+                
+                findViewById(R.id.flashcard_question).startAnimation(leftAnim);                
+               
             }
         });
 
         findViewById(R.id.last_card).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+            
+            if (isShowingAnswers) {
+                    findViewById(R.id.flashcard_answer1).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.flashcard_answer2).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.flashcard_answer3).setVisibility(View.INVISIBLE);
+                    ((ImageView) findViewById(R.id.toggle_choices_visibility)).setImageResource(R.drawable.ic_flashcard_answer_visible);
+                    isShowingAnswers = false;
+                }
 
                 final Animation leftAnim = AnimationUtils.loadAnimation(v.getContext(), R.anim.left_transition);
                 final Animation rightAnim = AnimationUtils.loadAnimation(v.getContext(), R.anim.right_transition);
 
-                rightAnim.setAnimationListener(new Animation.AnimationListener() {
+                leftAnim.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
                         // this method is called when the animation first starts
-                        findViewById(R.id.flashcard_question).startAnimation(rightAnim);
-                        findViewById(R.id.flashcard_answer1).startAnimation(rightAnim);
-                        findViewById(R.id.flashcard_answer2).startAnimation(rightAnim);
-                        findViewById(R.id.flashcard_answer3).startAnimation(rightAnim);
+                        
                     }
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         // this method is called when the animation is finished playing
-                        findViewById(R.id.flashcard_question).startAnimation(leftAnim);
-                        findViewById(R.id.flashcard_answer1).startAnimation(leftAnim);
-                        findViewById(R.id.flashcard_answer2).startAnimation(leftAnim);
-                        findViewById(R.id.flashcard_answer3).startAnimation(leftAnim);
+                        findViewById(R.id.flashcard_question).startAnimation(rightAnim);
+                        ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
+                        ((TextView) findViewById(R.id.flashcard_answer1)).setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
+                        ((TextView) findViewById(R.id.flashcard_answer2)).setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer1());
+                        ((TextView) findViewById(R.id.flashcard_answer3)).setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer2());
                     }
 
                     @Override
@@ -140,6 +144,9 @@ public class MainActivity extends AppCompatActivity {
                         // we don't need to worry about this method
                     }
                 });
+                
+                findViewById(R.id.flashcard_question).startAnimation(leftAnim);
+
 
                 // subtract our pointer index so we can show the next card
                 if(deletePressed == 0) {
@@ -156,15 +163,8 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // set the question and answer TextViews with data from the database
-                ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
-                ((TextView) findViewById(R.id.flashcard_answer1)).setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
-                ((TextView) findViewById(R.id.flashcard_answer2)).setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer1());
-                ((TextView) findViewById(R.id.flashcard_answer3)).setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer2());
                 ((ImageView) findViewById(R.id.toggle_choices_visibility)).setImageResource(R.drawable.ic_flashcard_answer_visible);
-                findViewById(R.id.flashcard_answer1).setVisibility(View.INVISIBLE);
-                findViewById(R.id.flashcard_answer2).setVisibility(View.INVISIBLE);
-                findViewById(R.id.flashcard_answer3).setVisibility(View.INVISIBLE);
-                isShowingAnswers = false;
+
             }
         });
 
@@ -182,17 +182,24 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("string3", str3);
                 intent.putExtra("string4", str4);
                 MainActivity.this.startActivityForResult(intent, 100);
-                overridePendingTransition(R.anim.left_transition, R.anim.right_transition);
+                overridePendingTransition(R.anim.right_transition, R.anim.left_transition);
             }
         });
         
         findViewById(R.id.trash_card).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (allFlashcards.size() == 1) {
+                    Snackbar.make(findViewById(R.id.flashcard_question),
+                            "You only have one question left",
+                            Snackbar.LENGTH_SHORT)
+                            .show();
+                    return;
+                }
                 flashcardDatabase.deleteCard(((TextView) findViewById(R.id.flashcard_question)).getText().toString());
                 allFlashcards = flashcardDatabase.getAllCards();
                 deletePressed = 1;
-                currentCardDisplayedIndex--;
+                
                 ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
                 ((TextView) findViewById(R.id.flashcard_answer1)).setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
                 ((TextView) findViewById(R.id.flashcard_answer2)).setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer1());
