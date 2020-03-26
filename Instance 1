@@ -83,7 +83,13 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 // advance our pointer index so we can show the next card
-                currentCardDisplayedIndex++;
+                if(deletePressed == 0) {
+                    currentCardDisplayedIndex++;
+                }
+                else {
+                    currentCardDisplayedIndex+=2;
+                    deletePressed = 0;
+                }
 
                 // make sure we don't get an IndexOutOfBoundsError if we are viewing the last indexed card in our list
                 if (currentCardDisplayedIndex > allFlashcards.size() - 1) {
@@ -136,7 +142,13 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 // subtract our pointer index so we can show the next card
-                currentCardDisplayedIndex--;
+                if(deletePressed == 0) {
+                    currentCardDisplayedIndex--;
+                }
+                else {
+                    currentCardDisplayedIndex-=2;
+                    deletePressed = 0;
+                }
                 
                 // make sure we don't get an IndexOutOfBoundsError if we are viewing the last indexed card in our list
                 if (currentCardDisplayedIndex < 0) {
@@ -173,6 +185,30 @@ public class MainActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.left_transition, R.anim.right_transition);
             }
         });
+        
+        findViewById(R.id.trash_card).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flashcardDatabase.deleteCard(((TextView) findViewById(R.id.flashcard_question)).getText().toString());
+                allFlashcards = flashcardDatabase.getAllCards();
+                deletePressed = 1;
+                currentCardDisplayedIndex--;
+                ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
+                ((TextView) findViewById(R.id.flashcard_answer1)).setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
+                ((TextView) findViewById(R.id.flashcard_answer2)).setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer1());
+                ((TextView) findViewById(R.id.flashcard_answer3)).setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer2());
+                ((ImageView) findViewById(R.id.toggle_choices_visibility)).setImageResource(R.drawable.ic_flashcard_answer_visible);
+                findViewById(R.id.flashcard_answer1).setVisibility(View.INVISIBLE);
+                findViewById(R.id.flashcard_answer2).setVisibility(View.INVISIBLE);
+                findViewById(R.id.flashcard_answer3).setVisibility(View.INVISIBLE);
+                isShowingAnswers = false;
+                Snackbar.make(findViewById(R.id.flashcard_question),
+                        "Card Deleted!",
+                        Snackbar.LENGTH_SHORT)
+                        .show();
+            }
+        });
+
 
        
         ((ImageView) findViewById(R.id.toggle_choices_visibility)).setImageResource(R.drawable.ic_flashcard_answer_visible);
